@@ -1,14 +1,39 @@
-# DeepGLM Research Agent
+# DeepGLM Android Automation Agent
 
-A streamlined research and knowledge work assistant built as a single-agent CLI tool. DeepGLM focuses on simplicity, directness, and extensibility while providing powerful internet search capabilities powered by open-source LLMs.
+An intelligent Android device automation agent built with LangChain DeepAgents. DeepGLM focuses on goal-oriented task execution where you specify objectives and the agent decomposes and executes them using ADB commands.
+
+## Project Status
+
+**Current Phase: Phase 1 - Core Structure Setup 🚧**
+
+The project is currently in Phase 1 of development, establishing a layered architecture foundation. Android automation features are planned for Phase 2-5.
+
+**What Works Now:**
+- ✅ Clean modular code structure
+- ✅ Internet search via Tavily
+- ✅ Configuration management
+- ✅ Placeholder ADB tools (not yet implemented)
+
+**Coming Soon:**
+- 🔨 Phase 2: Actual ADB functionality implementation
+- 🔨 Phase 3: Subagent integration
+- 🔨 Phase 4: Vision model for screen analysis
+- 🔨 Phase 5: File system operations
 
 ## Features
 
-- **Monolithic Architecture**: Single agent with tool-based extensibility
-- **Explicit Search Control**: Agent searches only when you explicitly request it
-- **Open-Source Models**: Works with DeepSeek and other OpenAI-compatible APIs
-- **LangSmith Integration**: Built-in execution tracing for debugging
-- **Simple Configuration**: Environment-based configuration, no complex setup
+### Current (Phase 1)
+- **Layered Architecture**: Clean separation of config, tools, and agents
+- **Internet Search**: Powered by Tavily API for research
+- **Type-Safe Configuration**: Environment-based config with validation
+- **Extensible Design**: Easy to add new tools and agents
+
+### Planned (Phase 2-5)
+- **ADB Integration**: Control Android devices via ADB commands
+- **Goal-Oriented Automation**: Specify objectives, agent handles execution
+- **Visual Screen Analysis**: Understand screen content with vision models
+- **App Management**: Launch, monitor, and control Android apps
+- **UI Operations**: Tap, swipe, input, and navigate interfaces
 
 ## Installation
 
@@ -30,7 +55,7 @@ pip install -e .
 
 ## Configuration
 
-Create a `.env` file in the project root with your API keys:
+Create a `.env` file in the project root:
 
 ```bash
 cp .env.example .env
@@ -42,15 +67,21 @@ Edit `.env` and add your credentials:
 # Required: Model Provider (OpenAI-compatible API)
 OPENAI_API_KEY="sk-your-api-key-here"
 OPENAI_BASE_URL="https://api.deepseek.com"
-MODEL_NAME="deepseek-chat"
+OPENAI_MODEL="deepseek-ai/DeepSeek-V3.2"
 
 # Required: Search
 TAVILY_API_KEY="tvly-your-tavily-api-key-here"
 
+# Optional: Vision Model (for Phase 4)
+# VISION_MODEL="gpt-4o"
+
+# Optional: ADB Path (for Phase 2)
+# ADB_PATH="/usr/local/bin/adb"
+
 # Optional: LangSmith Tracing
-LANGCHAIN_TRACING_V2="true"
-LANGCHAIN_API_KEY="lsv2-your-langsmith-api-key-here"
-LANGCHAIN_PROJECT="deepglm-research"
+# LANGCHAIN_TRACING_V2="true"
+# LANGCHAIN_API_KEY="lsv2-your-langsmith-api-key-here"
+# LANGCHAIN_PROJECT="deepglm-android"
 ```
 
 ### Getting API Keys
@@ -61,9 +92,9 @@ LANGCHAIN_PROJECT="deepglm-research"
 
 ## Usage
 
-### Basic Usage
+### Basic Usage (Current - Phase 1)
 
-Run DeepGLM with your research question as a command-line argument:
+Currently, DeepGLM can research topics and answer questions using internet search:
 
 ```bash
 python main.py "What are the latest developments in quantum computing?"
@@ -71,73 +102,116 @@ python main.py "What are the latest developments in quantum computing?"
 
 ### Examples
 
-**Search for current information:**
+**Research Android automation:**
 ```bash
-python main.py "What are today's major technology headlines?"
+python main.py "Research best practices for Android UI automation with ADB"
 ```
 
-**General knowledge questions (no search):**
+**General knowledge:**
 ```bash
-python main.py "Explain the concept of machine learning"
+python main.py "Explain how Android's input system works"
 ```
 
 **Finance-specific search:**
 ```bash
-python main.py "What's the current stock market trend?"
+python main.py "What's the current trend in mobile app development?"
 ```
 
-**News search:**
+### Planned Usage (Phase 2-5)
+
+Once ADB tools are implemented, you'll be able to:
+
 ```bash
-python main.py "Search for recent developments in artificial intelligence"
+# Open an app and perform actions
+python main.py "Open YouTube and search for cat videos"
+
+# Navigate through settings
+python main.py "Enable dark mode in system settings"
+
+# Multi-step automation
+python main.py "Open Gmail, compose a new email to test@example.com with subject 'Test'"
 ```
 
-### How It Works
+## Architecture Overview
 
-1. **No Search Needed**: If your question can be answered from the model's training data, it responds directly without searching
-2. **Explicit Search**: If you ask for current information, explicitly request search, or ask questions requiring external data, the agent uses the internet search tool
-3. **Transparent Behavior**: All agent actions are traceable via LangSmith (if configured)
+### Directory Structure
 
-## Architecture
+```
+DeepGLM/
+├── config/              # Configuration layer
+│   ├── settings.py      # Environment loading & validation
+│   └── prompts.py       # System prompts for agents
+├── tools/               # Tools layer
+│   ├── adb.py          # ADB command wrappers (placeholders)
+│   ├── internet.py     # Tavily search integration
+│   └── vision.py       # Screen analysis (reserved)
+├── agents/              # Agent layer
+│   ├── main_agent.py   # Primary Android automation agent
+│   └── subagents/      # Subagent configurations
+│       └── android_operator.py  # Android UI specialist
+├── middleware/          # Middleware layer (reserved)
+│   └── filesystem.py   # File operations (future)
+├── main.py             # Entry point
+├── pyproject.toml      # Dependencies
+├── .env.example        # Environment template
+└── README.md           # This file
+```
 
 ### Design Principles
 
-- **Simplicity First**: Minimal abstractions, direct implementations
-- **Explicit Control**: User-initiated search triggers, no autonomous decisions
-- **Transparent Failures**: Clear error messages without complex retry logic
-- **Extensibility**: Easy to add new tools via code
-- **No Constraints**: Unlimited execution, no filtering, no caching
-
-### Tool Extension
-
-You can easily add new tools by defining functions and passing them to the agent:
-
-```python
-def calculator(expression: str) -> float:
-    """Evaluate a mathematical expression"""
-    return eval(expression)
-
-agent = create_deep_agent(
-    model=model,
-    tools=[internet_search, calculator],
-    system_prompt=research_instructions
-)
-```
+- **Layered Architecture**: Clear separation between config, tools, and agents
+- **Type Safety**: Type hints throughout for better IDE support
+- **Explicit Over Implicit**: Clear, direct implementations over magic
+- **Phased Development**: Incremental feature addition based on need
+- **Zero Breaking Changes**: Backward compatibility maintained during refactors
 
 ## Development
 
-### Project Structure
+### Phase 1: Core Structure (Current)
+✅ Completed:
+- Directory structure with __init__.py files
+- Configuration management (config/settings.py)
+- System prompts (config/prompts.py)
+- Placeholder ADB tools (tools/adb.py)
+- Internet search tool (tools/internet.py)
+- Vision module placeholder (tools/vision.py)
+- Agent factory (agents/main_agent.py)
+- Subagent specification (agents/subagents/android_operator.py)
+- Refactored main.py
+- Updated documentation
 
-```
-deepglm/
-├── main.py              # Entry point
-├── pyproject.toml       # Dependencies
-├── .env.example         # Environment template
-└── README.md            # This file
-```
+### Phase 2: Android Tools Implementation (Next)
+- Implement actual ADB command execution
+- Device info functions (get_devices, get_device_info, get_battery_level)
+- Input events (tap, swipe, input_text, press_key)
+- Screen capture
+- App management (list_packages, launch_app, force_stop_app, install_app, uninstall_app)
+- Error handling and device status checks
 
-### Dependencies
+### Phase 3: Agent Integration
+- Integrate SubAgentMiddleware
+- Design comprehensive system prompts
+- Create specialized subagents
+- Test end-to-end automation workflows
 
-- `deepagents>=0.3.4` - Agent framework
+### Phase 4: Vision Analysis
+- Setup vision model integration
+- Implement capture_and_analyze function
+- Create visual analysis workflows
+- Test screen understanding capabilities
+
+### Phase 5: File System Operations
+- Design file system middleware architecture
+- Implement basic file operations
+- Add sandbox restrictions
+
+## Dependencies
+
+Current dependencies (pyproject.toml):
+
+- `deepagents>=0.3.4` - Agent framework with LangGraph
+- `langchain-openai` - OpenAI-compatible LLM integration
+- `langchain-core` - Core LangChain components
 - `tavily-python>=0.7.17` - Search API
 - `python-dotenv>=1.0.0` - Environment variable loading
 
@@ -145,7 +219,7 @@ deepglm/
 
 ### Missing Environment Variables
 
-If you see an error about missing environment variables, ensure your `.env` file is properly configured:
+If you see an error about missing environment variables:
 
 ```bash
 # Check if .env exists
@@ -156,14 +230,19 @@ grep OPENAI_API_KEY .env
 grep TAVILY_API_KEY .env
 ```
 
-### LangSmith Tracing Not Working
+### Import Errors
 
-Ensure the following environment variables are set in your `.env`:
+If you encounter import errors:
 
 ```bash
-LANGCHAIN_TRACING_V2="true"
-LANGCHAIN_API_KEY="lsv2-your-key"
-LANGCHAIN_PROJECT="deepglm-research"
+# Ensure you're in the project root
+cd /path/to/DeepGLM
+
+# Install dependencies
+uv sync
+
+# Verify Python path
+python -c "import sys; print(sys.path)"
 ```
 
 ### Model Connection Issues
@@ -171,30 +250,23 @@ LANGCHAIN_PROJECT="deepglm-research"
 If you're using DeepSeek, verify:
 - `OPENAI_API_KEY` is correct
 - `OPENAI_BASE_URL` is set to `https://api.deepseek.com`
-- `MODEL_NAME` is set to `deepseek-chat`
+- `OPENAI_MODEL` is set to a valid model name
 
-## Limitations
+## Roadmap
 
-- **Single-turn conversation**: No multi-turn context maintenance
-- **No streaming**: Complete response returned at once
-- **Plain text output**: No Markdown or rich formatting
-- **No caching**: Every search is real-time
-- **No content filtering**: User responsible for content evaluation
-
-## Future Enhancements
-
-Potential future improvements (only if needed):
-
-- Phase 2: Tool expansion (code execution, file operations)
-- Phase 3: Rich interaction (multi-turn, streaming, Markdown)
-- Phase 4: Advanced features (long-term memory, knowledge base)
-
-**Key Principle**: Complexity is only added when proven necessary by actual use cases.
-
-## License
-
-[Your License Here]
+See [dev/plan/0002-code-structure.md](dev/plan/0002-code-structure.md) for detailed implementation plans and phase specifications.
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+**Development Guidelines:**
+1. Follow the phased development approach
+2. Maintain type hints and docstrings
+3. Keep backward compatibility
+4. Test before committing
+5. Update documentation as needed
+
+## License
+
+[Your License Here]
