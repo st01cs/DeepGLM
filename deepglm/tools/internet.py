@@ -5,10 +5,10 @@ Extracted from main.py to enable modular tool organization.
 """
 
 from typing import Literal
+
 from tavily import TavilyClient
 
-from config.settings import settings
-
+from deepglm.config.settings import settings
 
 # Initialize Tavily client with API key from settings
 tavily_client = TavilyClient(api_key=settings.TAVILY_API_KEY)

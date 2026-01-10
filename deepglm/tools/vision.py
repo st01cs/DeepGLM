@@ -6,7 +6,6 @@ for analyzing Android device screenshots.
 This will be implemented in Phase 4 of the project.
 """
 
-from typing import Literal
 
 
 # Type aliases for future implementation

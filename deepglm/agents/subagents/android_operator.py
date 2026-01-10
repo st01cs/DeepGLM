@@ -7,7 +7,7 @@ Currently this is a specification only - it will be integrated
 into the main agent in Phase 3.
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
 
 # Placeholder references to tools that will be implemented
 # These are string references to avoid import errors with placeholder functions

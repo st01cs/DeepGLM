@@ -12,10 +12,9 @@ Example:
 
 import sys
 
-from agents.main_agent import create_android_agent
-
 # Import settings to trigger validation
-import config.settings  # noqa: F401
+import deepglm.config.settings  # noqa: F401
+from deepglm.agents.main_agent import create_android_agent
 
 
 def main():

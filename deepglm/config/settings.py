@@ -6,6 +6,7 @@ providing typed access to configuration throughout the application.
 
 import os
 import sys
+
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
